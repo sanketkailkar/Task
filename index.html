@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <nav>
+        <input type="text" name="" id="userInput" placeholder="Search places...">
+        <button class="searchBtn">Ctrl+/</button>
+    </nav>
+
+    <main class="main">
+        <div id="loaderDiv"></div>
+        <table id="myTable">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Place Name</th>
+                    <th>Country</th>
+                </tr>
+            </thead>
+            <tbody id="myTableBody">
+            </tbody>
+        </table>
+    </main>
+
+    <div id="errorDiv">
+        <div id="errorMessage"></div>
+    </div>
+
+    <footer id="footer">
+        <div class="cityData">
+            <label for="noOfCities">Number of cities:</label>
+            <input type="text" id="noOfCities" name="noOfCities" min="1" max="10" value="5">
+
+        </div>
+    </footer>
+    <script src="script.js"></script>
+</body>
+
+</html>
