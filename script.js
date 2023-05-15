@@ -55,7 +55,7 @@ userInput.addEventListener("change", async function (e) {
             }
         } else {
             errorDiv.style.display = "flex";
-            errorMessage.innerHTML = "Search searching";
+            errorMessage.innerHTML = "Search something";
         }
     }
 });
