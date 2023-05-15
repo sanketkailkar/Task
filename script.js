@@ -75,7 +75,7 @@ function makeRows(data) {
             const row = `<tr>
                         <td>${i + 1}</td>
                         <td>${placeName}</td>
-                        <td id="tdImg"><img src="https://flagsapi.com/${countryCode}/flat/32.png"> ${country}</td>
+                        <td id="tdImg"><img src="https://flagsapi.com/${countryCode}/flat/24.png"> ${country}</td>
                     </tr>`
             rows += row;
         }
