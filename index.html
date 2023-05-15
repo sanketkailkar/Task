@@ -14,9 +14,10 @@
         <input type="text" name="" id="userInput" placeholder="Search places...">
         <button class="searchBtn">Ctrl+/</button>
     </nav>
-
     <main class="main">
-        <div id="loaderDiv"></div>
+        <div id="loaderDiv">
+            <div class="loader"></div>
+        </div>
         <table id="myTable">
             <thead>
                 <tr>
@@ -33,14 +34,14 @@
     <div id="errorDiv">
         <div id="errorMessage"></div>
     </div>
-
-    <footer id="footer">
+    <div class="footer">
+        <div id="pagination"></div>
         <div class="cityData">
-            <label for="noOfCities">Number of cities:</label>
-            <input type="text" id="noOfCities" name="noOfCities" min="1" max="10" value="5">
-
+            <div>Show<input type="text" id="noOfCities" name="noOfCities" min="1" max="10" value="5">per page</div>
+            <div class="warningMessage"></div>
         </div>
-    </footer>
+    </div>
+
     <script src="script.js"></script>
 </body>
 

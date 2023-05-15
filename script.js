@@ -1,15 +1,14 @@
-const userInput = document.getElementById('userInput');
-const table = document.getElementById('myTableBody');
-const tableBody = document.getElementById('myTableBody');
-const errorMessage = document.getElementById('errorMessage');
-const footer = document.getElementById('footer');
-const cityDiv = document.querySelector('.cityData');
+const userInput = document.getElementById("userInput");
+const tableBody = document.getElementById("myTableBody");
+const loader = document.querySelector(".loader");
+const errorDiv = document.getElementById("errorDiv");
+const errorMessage = document.getElementById("errorMessage");
+const cityDiv = document.querySelector(".cityData");
+const limit = document.getElementById("noOfCities");
+const warningMessage = document.querySelector(".warningMessage");
 
-const loader = document.createElement('div');
-loader.className = 'loader';
 
 const url = 'https://wft-geo-db.p.rapidapi.com/v1/geo/cities';
-
 const options = {
     method: 'GET',
     headers: {
@@ -18,72 +17,78 @@ const options = {
     }
 };
 
+userInput.addEventListener("change", async function (e) {
+    let value = e.target.value;
+    let limitValue = limit.value;
+
+    if (limitValue > 10) {
+        warningMessage.innerHTML = "Put number between 1 to 10 only."
+    } else {
+        cityDiv.style.display = "none";
+        warningMessage.innerHTML = "";
+        if (value !== "") {
+            errorDiv.style.display = "none";
+            errorMessage.innerHTML = "";
+            try {
+                errorDiv.style.display = "none";
+                errorMessage.innerHTML = "";
+
+                loader.style.display = "block";
+
+                const params = { countryIds: 'IN', namePrefix: 'del', limit: '5' };
+
+                const response = await fetch(`${url}?namePrefix=${value}&limit=${limitValue}`, options);
+                if (response.ok) {
+                    const result = await response.json();
+                    const resultData = result.data;
+                    const rowResult = makeRows(resultData);
+
+                    loader.style.display = "none";
+                    tableBody.innerHTML = rowResult;
+                    cityDiv.style.display = "block";
+                } else {
+                    errorDiv.style.display = "flex";
+                    errorMessage.innerHTML = "No result found";
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            errorDiv.style.display = "flex";
+            errorMessage.innerHTML = "Search searching";
+        }
+    }
+});
+
 function makeRows(data) {
-    console.log(data);
     let rows = "";
     if (data.length > 0) {
-        errorMessage.innerHTML = '';
+        errorDiv.style.display = "none";
+        errorMessage.innerHTML = "";
+
         for (let i = 0; i < data.length; i++) {
-            const valueData = data[i];
-            const placeName = valueData.city;
-            const country = valueData.country;
-            const countryCode = valueData.countryCode;
+            const valueOfData = data[i];
+            const placeName = valueOfData.city;
+            const country = valueOfData.country;
+            const countryCode = valueOfData.countryCode;
 
             const row = `<tr>
-                            <td>${i + 1}</td>
-                            <td>${placeName}</td>
-                            <td><img src="https://flagsapi.com/${countryCode}/flat/24.png"> ${country}</td>
-                        </tr>`
+                        <td>${i + 1}</td>
+                        <td>${placeName}</td>
+                        <td id="tdImg"><img src="https://flagsapi.com/${countryCode}/flat/32.png"> ${country}</td>
+                    </tr>`
             rows += row;
         }
-        // footer.style.display = "flex";
         return rows;
+
     } else {
+        errorDiv.style.display = "flex";
         errorMessage.innerHTML = "No result found";
     }
     return rows;
 };
 
-userInput.addEventListener('change', async function (e) {
-    const value = e.target.value;
-    const limitValue = document.getElementById('noOfCities').value;
-    if (limitValue > 10) {
-        let div = document.createElement('div');
-        div.className = 'divCities';
-        cityDiv.appendChild(div);
-        div.innerHTML = "Put number between 1 to 10 only.";
-    } else {
-        const params = { countryIds: 'IN', namePrefix: 'del', limit: '5' };
-        if (value !== '') {
-            try {
-                const loaderDiv = document.getElementById('loaderDiv');
-                loaderDiv.appendChild(loader);
-                loader.style.display = 'block';
-
-                const response = await fetch(`${url}?namePrefix=${value}&limit=${limitValue}`, options);
-                if (response.ok) {
-                    errorMessage.innerHTML = "";
-                    const result = await response.json();
-                    const rowResult = makeRows(result.data);
-
-                    loader.style.display = 'none';
-                    table.innerHTML = rowResult;
-                } else {
-                    errorMessage.innerHTML = "No result found";
-                }
-
-            } catch (error) {
-                console.error(error);
-            }
-        } else {
-            errorMessage.innerHTML = "Start searching";
-        }
-    }
-
-
-});
-
-document.addEventListener('keydown', e => {
+document.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === '/') {
         e.preventDefault();
         userInput.focus();
