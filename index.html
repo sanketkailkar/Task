@@ -5,15 +5,20 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task</title>
+    <title>Solvative Task</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <nav>
-        <input type="text" name="" id="userInput" placeholder="Search places...">
-        <button class="searchBtn">Ctrl+/</button>
+        <input type="text" name="" id="userInput" placeholder="Search places..." tabindex="1" required>
+        <button class="searchBtn" tabindex="0">Ctrl+/</button>
+        <div id="inputBoxMessage">
+            <p class="emptyMsg ">Search something</p>
+            <p class="inputMsg ">Please put only letters and numbers</p>
+        </div>
     </nav>
+
     <main class="main">
         <div id="loaderDiv">
             <div class="loader"></div>
@@ -26,19 +31,21 @@
                     <th>Country</th>
                 </tr>
             </thead>
-            <tbody id="myTableBody">
+            <tbody class="myTableBody">
             </tbody>
         </table>
     </main>
 
-    <div id="errorDiv">
-        <div id="errorMessage"></div>
+    <div class="errorDiv">
+        <div class="errorMessage">No result found</div>
     </div>
+
     <div class="footer">
-        <div id="pagination"></div>
+        <div class="pagination"></div>
         <div class="cityData">
-            <div>Show<input type="text" id="noOfCities" name="noOfCities" min="1" max="10" value="5">per page</div>
-            <div class="warningMessage"></div>
+            <div>Show<input type="text" class="noOfCities" name="noOfCities" value="5" tabindex="2" required>per page
+            </div>
+            <div class="warningMessage">Put number between 1 to 10 only.</div>
         </div>
     </div>
 

@@ -1,10 +1,17 @@
 const userInput = document.getElementById("userInput");
-const tableBody = document.getElementById("myTableBody");
+const inputBoxMessage = document.getElementById("inputBoxMessage");
+const emptyMsg = document.querySelector(".emptyMsg");
+const inputMsg = document.querySelector(".inputMsg");
+
+const tableBody = document.querySelector(".myTableBody");
+const loaderDiv = document.getElementById("loaderDiv");
 const loader = document.querySelector(".loader");
-const errorDiv = document.getElementById("errorDiv");
-const errorMessage = document.getElementById("errorMessage");
+
+const errorDiv = document.querySelector(".errorDiv");
+const errorMessage = document.querySelector(".errorMessage");
+
 const cityDiv = document.querySelector(".cityData");
-const limit = document.getElementById("noOfCities");
+const limit = document.querySelector(".noOfCities");
 const warningMessage = document.querySelector(".warningMessage");
 
 
@@ -17,23 +24,114 @@ const options = {
     }
 };
 
-userInput.addEventListener("change", async function (e) {
+const removeLoader = () => {
+    loaderDiv.className = "fade";
+}
+const addLoader = () => {
+    loaderDiv.classList.remove('fade');
+}
+
+const showEmptyMessage = () => {
+    emptyMsg.classList.add("emptyMessage");
+}
+const hideEmptyMessage = () => {
+    emptyMsg.classList.remove("emptyMessage");
+}
+const showLetterAndNumberMsg = () => {
+    inputMsg.classList.add("letterAndNumber");
+}
+const hideLetterAndNumberMsg = () => {
+    inputMsg.classList.remove("letterAndNumber");
+}
+function inputFocusHandler() {
+    userInput.focus();
+}
+
+const showErrorMessage = () => {
+    errorMessage.classList.remove("hideErrorMessage");
+}
+const hideErrorMessage = () => {
+    errorMessage.classList.add("hideErrorMessage");
+}
+const showErrorDiv = () => {
+    errorDiv.classList.remove("hideErrorDiv");
+}
+const hideErrorDiv = () => {
+    errorDiv.classList.add("hideErrorDiv");
+}
+
+const showWarningMessage = () => {
+    warningMessage.classList.add("showWarningMessage");
+}
+const hideWarningMessage = () => {
+    warningMessage.classList.remove("showWarningMessage");
+}
+const showCityData = () => {
+    cityDiv.classList.remove("hideCityData");
+}
+const hideCityData = () => {
+    cityDiv.classList.add("hideCityData");
+}
+
+const showMyTableBody = () => {
+    tableBody.classList.remove("hideMyTableBody");
+}
+const hideMyTableBody = () => {
+    tableBody.classList.add("hideMyTableBody");
+}
+
+
+function userInputValidation(inputText) {
+    const regexLetters = /^[A-Za-z0-9]+$/;
+    hideEmptyMessage();
+    hideLetterAndNumberMsg();
+
+    if (inputText.value === "") {
+        showEmptyMessage();
+        inputFocusHandler();
+    }
+    else if (inputText.value.match(regexLetters)) {
+        return true;
+    } else {
+        showLetterAndNumberMsg();
+        userInput.removeEventListener("change", true);
+        // userInput.removeEventListener("change", inputFocusHandler, true);
+    }
+};
+
+function limitValueValidation(limit) {
+    hideWarningMessage();
+    let limitValue = Number.parseInt(limit.value);
+    const regexNumber = /^[0-9]+$/;
+    if (limitValue === 0 || limitValue > 10) {
+        showWarningMessage();
+    } else if (limit.value.match(regexNumber)) {
+        return true;
+    } else {
+        showWarningMessage();
+        userInput.removeEventListener("change", true);
+    }
+};
+
+removeLoader();
+hideErrorMessage();
+showMyTableBody();
+
+const userInputHandler = async function (e) {
     let value = e.target.value;
     let limitValue = limit.value;
 
-    if (limitValue > 10) {
-        warningMessage.innerHTML = "Put number between 1 to 10 only."
-    } else {
-        cityDiv.style.display = "none";
-        warningMessage.innerHTML = "";
-        if (value !== "") {
-            errorDiv.style.display = "none";
-            errorMessage.innerHTML = "";
-            try {
-                errorDiv.style.display = "none";
-                errorMessage.innerHTML = "";
+    userInputValidation(userInput);
 
-                loader.style.display = "block";
+    if (limitValue > 10) {
+        showWarningMessage();
+    } else {
+        hideWarningMessage();
+        if (value !== "") {
+            hideErrorDiv();
+            try {
+                hideErrorDiv();
+                addLoader();
 
                 const params = { countryIds: 'IN', namePrefix: 'del', limit: '5' };
 
@@ -43,28 +141,32 @@ userInput.addEventListener("change", async function (e) {
                     const resultData = result.data;
                     const rowResult = makeRows(resultData);
 
-                    loader.style.display = "none";
+                    removeLoader();
+                    showMyTableBody();
                     tableBody.innerHTML = rowResult;
-                    cityDiv.style.display = "block";
+                    showCityData();
+
                 } else {
-                    errorDiv.style.display = "flex";
-                    errorMessage.innerHTML = "No result found";
+                    removeLoader();
+                    // hideMyTableBody();
+                    showErrorDiv();
+                    showErrorMessage();
+
                 }
             } catch (error) {
                 console.error(error);
             }
         } else {
-            errorDiv.style.display = "flex";
-            errorMessage.innerHTML = "Search something";
+            hideMyTableBody();
+            showErrorDiv();
         }
     }
-});
+};
 
 function makeRows(data) {
     let rows = "";
     if (data.length > 0) {
-        errorDiv.style.display = "none";
-        errorMessage.innerHTML = "";
+        hideErrorDiv();
 
         for (let i = 0; i < data.length; i++) {
             const valueOfData = data[i];
@@ -82,15 +184,30 @@ function makeRows(data) {
         return rows;
 
     } else {
-        errorDiv.style.display = "flex";
-        errorMessage.innerHTML = "No result found";
+        hideMyTableBody();
+        showErrorDiv();
+        showErrorMessage();
+        console.log("error");
     }
     return rows;
 };
 
-document.addEventListener('keydown', (e) => {
-    if ((e.ctrlKey || e.metaKey) && e.key === '/') {
+
+const keypressHandler = (e) => {
+    if (e.key === 'Enter') {
+        e.preventDefault;
+        userInputValidation(userInput);
+        limitValueValidation(limit);
+    } else if ((e.ctrlKey || e.metaKey) && e.key === '/') {
         e.preventDefault();
-        userInput.focus();
+        inputFocusHandler();
+    } else if (userInput.value === "" && e.key === 'Enter') {
+        showEmptyMessage();
+        inputFocusHandler();
+    } else if (userInput.value !== "" && limit.value === "") {
+
     }
-});
+};
+
+userInput.addEventListener("change", userInputHandler);
+document.addEventListener('keydown', keypressHandler)
