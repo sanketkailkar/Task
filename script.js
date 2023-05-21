@@ -94,10 +94,10 @@ function userInputValidation(inputText) {
         return true;
     } else {
         showLetterAndNumberMsg();
-        userInput.removeEventListener("change", true);
-        // userInput.removeEventListener("change", inputFocusHandler, true);
+        userInput.removeEventListener("change", false);
     }
 };
+
 
 function limitValueValidation(limit) {
     hideWarningMessage();
@@ -148,7 +148,6 @@ const userInputHandler = async function (e) {
 
                 } else {
                     removeLoader();
-                    // hideMyTableBody();
                     showErrorDiv();
                     showErrorMessage();
 
@@ -187,9 +186,53 @@ function makeRows(data) {
         hideMyTableBody();
         showErrorDiv();
         showErrorMessage();
-        console.log("error");
     }
     return rows;
+};
+
+const limitEventHandler = async function (e) {
+    let limitValue = e.target.value;
+    let value = userInput.value;
+
+    userInputValidation(userInput);
+
+    if (limitValue == 0 || limitValue > 10) {
+        showWarningMessage();
+    } else {
+        hideWarningMessage();
+        if (value !== "") {
+            hideErrorDiv();
+            try {
+                hideErrorDiv();
+                addLoader();
+
+                const params = { countryIds: 'IN', namePrefix: 'del', limit: '5' };
+
+                const response = await fetch(`${url}?namePrefix=${value}&limit=${limitValue}`, options);
+                if (response.ok) {
+                    const result = await response.json();
+                    const resultData = result.data;
+                    const rowResult = makeRows(resultData);
+
+                    removeLoader();
+                    showMyTableBody();
+                    tableBody.innerHTML = rowResult;
+                    showCityData();
+
+                } else {
+                    removeLoader();
+                    showErrorDiv();
+                    showErrorMessage();
+
+                }
+            } catch (error) {
+                console.error(error);
+            }
+        } else {
+            hideMyTableBody();
+            showErrorDiv();
+        }
+    }
 };
 
 
@@ -211,3 +254,4 @@ const keypressHandler = (e) => {
 
 userInput.addEventListener("change", userInputHandler);
 document.addEventListener('keydown', keypressHandler)
+limit.addEventListener("change", limitEventHandler);
